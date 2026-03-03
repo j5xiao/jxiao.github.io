@@ -48,3 +48,45 @@ Total Columns: 12
 We are currently using the two databases mentioned above to predict user preferences based on recipe complexity and health value. To facilitate model training, in subsequent data cleaning, we split or converted non-numerical features into numerical features using text processing tools. For example, **nutrition** is split into seven new features, and user text reviews are converted into **(1, 0, -1)** numerical features to work in conjunction with ratings, etc.
 
 This project, based on the massive dataset from Food.com, aims to explore the underlying logic between healthy ingredients and taste preferences. By analyzing user review sentiment and recipe data, we will reveal the key factors influencing ratings and assess the correlation between cooking complexity and dietary health, thereby establishing a multi-dimensional recipe evaluation and recommendation system.
+
+## Data Cleaning and Exploratory Analysis
+
+🛠️ Data Cleaning and Preprocessing
+To ensure high-quality inputs for our analysis and machine learning models, we performed a series of data cleaning and feature engineering steps on the raw datasets.
+
+1. Merging Datasets
+We performed an Inner Join between df_recipes and df_reviews to link recipe metadata with user feedback.
+
+- Key: Linked using id (from recipes) and recipe_id (from reviews).
+
+- Goal: To create a unified dataset where each row represents a unique user interaction with specific recipe attributes.
+
+2. Handling Missing and Zero Ratings
+On Food.com, a rating of 0 often indicates that a user left a review without providing a score.
+
+- Action: We filtered out or imputed these 0-value ratings to prevent them from skewing the average satisfaction metrics.
+
+- Text Cleaning: Rows with empty review strings were removed to maintain the integrity of our sentiment analysis.
+
+3. Nutritional Feature Engineering
+The original nutrition column was stored as a string representation of a list (e.g., [242.5, 12.0, 25.0, ...]).
+
+- Action: We parsed and expanded this column into individual numerical features: calories (#), total fat (PDV), sugar (PDV), sodium (PDV), and protein (PDV).
+
+- Normalization: All "Percentage of Daily Value" (PDV) values were converted to floats for statistical consistency.
+
+4. Sentiment Categorization
+- To simplify the prediction task, we mapped the original 1–5 numerical rating into three categorical sentiment labels:
+
+1 Positive (1): 4–5 stars
+
+2 Neutral (0): 3 stars
+
+3 Negative (-1): 1–2 stars
+
+5. Outlier Removal and Filtering
+We identified and removed records with unrealistic values that could negatively impact model performance:
+
+- Time & Complexity: Filtered out recipes with minutes or n_steps that were logically impossible (e.g., 0 steps or cooking times spanning several months).
+
+- Consistency: Ensured that the number of ingredients (n_ingredients) aligned with the recipe descriptions.
