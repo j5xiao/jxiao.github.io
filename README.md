@@ -12,17 +12,13 @@ This dataset, represented as df_reviews, contains the feedback and interaction h
 
 📊 Overview
 Total Rows: 731,927
-
 Total Columns: 5
 
 📂 Feature List
-user_id (int64): The unique identifier for the user who posted the review.
-
-recipe_id (int64): The unique identifier for the recipe being reviewed.
-
-date (object): The date when the review was submitted.
-
-rating (int64): The numerical score provided by the user (typically on a scale of 1–5).
-
-review (object): The text content of the user's feedback and experience.
-
+| Column Name | Data Type | Description |
+| :--- | :--- | :--- |
+| **`user_id`** | int64 | The unique identifier for the user who posted the review. |
+| **`recipe_id`** | int64 | The unique identifier for the recipe being reviewed. |
+| **`date`** | object | The date when the review was submitted. |
+| **`rating`** | int64 | The numerical score provided by the user (1–5 scale). |
+| **`review`** | object | The text content of the user's feedback and experience. |
