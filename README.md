@@ -51,7 +51,6 @@ This project, based on the massive dataset from Food.com, aims to explore the un
 
 ## Data Cleaning and Exploratory Analysis
 
-🛠️ Data Cleaning and Preprocessing
 To ensure high-quality inputs for our analysis and machine learning models, we performed a series of data cleaning and feature engineering steps on the raw datasets.
 
 1. Merging Datasets
@@ -78,11 +77,11 @@ The original nutrition column was stored as a string representation of a list (e
 4. Sentiment Categorization
 - To simplify the prediction task, we mapped the original 1–5 numerical rating into three categorical sentiment labels:
 
-1 Positive (1): 4–5 stars
+1. Positive (1): 4–5 stars
 
-2 Neutral (0): 3 stars
+2. Neutral (0): 3 stars
 
-3 Negative (-1): 1–2 stars
+3. Negative (-1): 1–2 stars
 
 5. Outlier Removal and Filtering
 We identified and removed records with unrealistic values that could negatively impact model performance:
@@ -90,3 +89,4 @@ We identified and removed records with unrealistic values that could negatively 
 - Time & Complexity: Filtered out recipes with minutes or n_steps that were logically impossible (e.g., 0 steps or cooking times spanning several months).
 
 - Consistency: Ensured that the number of ingredients (n_ingredients) aligned with the recipe descriptions.
+
