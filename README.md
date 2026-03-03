@@ -75,13 +75,13 @@ The original nutrition column was stored as a string representation of a list (e
 - Normalization: All "Percentage of Daily Value" (PDV) values were converted to floats for statistical consistency.
 
 4. Sentiment Categorization
-- To simplify the prediction task, we mapped the original 1–5 numerical rating into three categorical sentiment labels:
+To simplify the prediction task, we mapped the original 1–5 numerical rating into three categorical sentiment labels:
 
-1. Positive (1): 4–5 stars
+-  Positive (1): 4–5 stars
 
-2. Neutral (0): 3 stars
+-  Neutral (0): 3 stars
 
-3. Negative (-1): 1–2 stars
+-  Negative (-1): 1–2 stars
 
 5. Outlier Removal and Filtering
 We identified and removed records with unrealistic values that could negatively impact model performance:
@@ -89,4 +89,5 @@ We identified and removed records with unrealistic values that could negatively 
 - Time & Complexity: Filtered out recipes with minutes or n_steps that were logically impossible (e.g., 0 steps or cooking times spanning several months).
 
 - Consistency: Ensured that the number of ingredients (n_ingredients) aligned with the recipe descriptions.
+
 
