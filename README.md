@@ -77,17 +77,39 @@ The original nutrition column was stored as a string representation of a list (e
 4. Sentiment Categorization
 To simplify the prediction task, we mapped the original 1–5 numerical rating into three categorical sentiment labels:
 
--  Positive (1): 4–5 stars
+-  Positive (1): 5 stars
 
--  Neutral (0): 3 stars
+-  Neutral (0): 3-4 stars
 
 -  Negative (-1): 1–2 stars
 
 5. Outlier Removal and Filtering
 We identified and removed records with unrealistic values that could negatively impact model performance:
 
-- Time & Complexity: Filtered out recipes with minutes or n_steps that were logically impossible (e.g., 0 steps or cooking times spanning several months).
+- Time & Complexity: Filtered out recipes with minutes that were logically impossible.
 
-- Consistency: Ensured that the number of ingredients (n_ingredients) aligned with the recipe descriptions.
+6. Recipe Feature Engineering (Content Characteristics)
+To quantify "healthy eating" and "recipe complexity" as mentioned in our overview, we derived the following:
 
+- Cooking Efficiency: Created a ratio of n_steps to minutes to identify recipes that are "fast but labor-intensive" versus "slow but simple."
+
+- Health Profiles: Categorized recipes into "High/Low Sugar" or "High/Low Fat" groups based on whether their PDV values exceeded the dataset median.
+
+- Ingredient Density: Used n_ingredients as a proxy for the logistical complexity of the recipe.
+
+7. User Feature Engineering (Behavior Characteristics)
+We aggregated the interaction data to understand user-specific tendencies:
+
+- User Engagement Level: Calculated the total number of reviews left by each user_id to distinguish between "power users" and "casual reviewers."
+
+- User Rating Bias: Calculated the average rating given by each user to determine if certain users are consistently "harsh" or "lenient" in their scoring.
+
+- Taste Profiles: Identified user preferences by tracking the average nutritional values (e.g., average sugar (PDV)) of the recipes they rated highly.
+
+8. Interaction Mapping (The Bridge)
+We created a final analytical table that captures the "interaction" between the user and the recipe:
+
+- Experience Matching: We looked at whether a user's historical preference (e.g., a history of liking low-calorie recipes) aligns with the current recipe's profile.
+
+- Time-Series Trends: Analyzed the date of the review relative to the submitted date of the recipe to see if user satisfaction changes as a recipe "ages" or becomes a classic on the platform.
 
