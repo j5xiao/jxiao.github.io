@@ -122,6 +122,32 @@ We created a final analytical table that captures the "interaction" between the 
 
 - Time-Series Trends: Analyzed the date of the review relative to the submitted date of the recipe to see if user satisfaction changes as a recipe "ages" or becomes a classic on the platform.
 
+Result:
+| Column Name           | Data Type |
+|-----------------------|-----------|
+| user_id               | float64   |
+| id                    | int64     |
+| calories (#)          | float64   |
+| sugar (PDV)           | float64   |
+| protein (PDV)         | float64   |
+| n_steps               | int64     |
+| minutes               | int64     |
+| final_target          | int64     |
+| user_idx              | int64     |
+| recipe_idx            | int64     |
+| u_avg_steps           | float64   |
+| u_avg_sugar           | float64   |
+| u_avg_mins            | float64   |
+| u_avg_calo            | float64   |
+| step_bias             | float64   |
+| calories_diff         | float64   |
+| sugar_diff            | float64   |
+| time_per_step         | float64   |
+| health_index          | float64   |
+| relative_complexity   | float64   |
+| review_count          | int64     |
+
+
 ### Univariate Analysis
 - Rating Characteristics: User ratings are extremely concentrated around 5.0, exhibiting a significant negative skewness.
 
@@ -221,7 +247,9 @@ Coding Notes: Since all selected features are quantitative and do not include ca
 
 - - Neutral (0) and Negative (-1): All indicators are almost 0.
 
-4. Is the current model "Good"? Conclusion: The current model is not ideal (Not a "good" model).
+4. Is the current model "Good"?
+
+Conclusion: The current model is not ideal (Not a "good" model).
 
 While its overall accuracy reached 76%, this was purely due to the model falling into the "majority class trap." Since 76% of the samples in the data were positive (Support: 34,607), the model achieved high accuracy by predicting almost all samples as 1.
 
@@ -230,3 +258,4 @@ While its overall accuracy reached 76%, this was purely due to the model falling
 - Weak generalization: The Macro Avg F1-Score (0.29) was far lower than the accuracy, indicating that the model completely failed when dealing with the minority class.
 
 - Conclusion: The current feature combinations or model parameters are not yet effective in capturing the key signals that distinguish between "positive" and "negative" reviews. Further feature engineering or more complex oversampling (such as SMOTE) is still needed.
+
