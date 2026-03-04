@@ -123,4 +123,5 @@ We created a final analytical table that captures the "interaction" between the 
 - Time-Series Trends: Analyzed the date of the review relative to the submitted date of the recipe to see if user satisfaction changes as a recipe "ages" or becomes a classic on the platform.
 
 
+<img src="assets/data/recipe_distributions.png" alt="plot" width="600">
 
