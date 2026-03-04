@@ -6,7 +6,16 @@ by Jinxin Xiao
 This project analyzes the nutritional data and preparation complexity of recipes, and uses machine learning to predict user satisfaction.
 
 ## Introduction
-This study aims to explore the intrinsic logic between "taste preferences" and "healthy ingredients" in modern food culture by deeply analyzing the massive amount of recipes and accompanying review data on the Food.com platform. The project will focus on user behavior characteristics and recipe content characteristics: on the one hand, by analyzing the emotional tendencies expressed by users in their reviews, key taste factors (such as the salt-to-sweet ratio and fat content) leading to high or low scores will be identified, thus outlining the taste profiles of different user groups; on the other hand, by combining the number of cooking steps, time, and detailed nutritional composition (protein, fat, sugar, etc.) of the recipes, the correlation between healthy eating and cooking complexity will be assessed. Ultimately, this project hopes to establish a multi-dimensional evaluation system that can not only recommend dishes that match users' historical preferences but also provide scientific insights and suggestions for healthy dietary ratios and recipe improvements from a data perspective.
+This study aims to explore the intrinsic logic between "taste preferences" and "healthy ingredients" in modern food culture by deeply 
+analyzing the massive amount of recipes and accompanying review data on the Food.com platform. The project will focus on user behavior 
+characteristics and recipe content characteristics: on the one hand, by analyzing the emotional tendencies expressed by users in their 
+reviews, key taste factors (such as the salt-to-sweet ratio and fat content) leading to high or low scores will be identified, thus 
+outlining the taste profiles of different user groups; on the other hand, by combining the number of cooking steps, time, and detailed 
+nutritional composition (protein, fat, sugar, etc.) of the recipes, the correlation between healthy eating and cooking complexity will be
+assessed. Ultimately, this project hopes to establish a multi-dimensional evaluation system that can not only recommend dishes that match 
+users' historical preferences but also provide scientific insights and suggestions for healthy dietary ratios and recipe improvements from 
+a data perspective.
+
 ### Dataset Introduction: 
 User Reviews: 
 This dataset, represented as df_reviews, contains the feedback and interaction history from users regarding various recipes. It serves as the primary source for our sentiment analysis and target labels.
@@ -112,5 +121,6 @@ We created a final analytical table that captures the "interaction" between the 
 - Experience Matching: We looked at whether a user's historical preference (e.g., a history of liking low-calorie recipes) aligns with the current recipe's profile.
 
 - Time-Series Trends: Analyzed the date of the review relative to the submitted date of the recipe to see if user satisfaction changes as a recipe "ages" or becomes a classic on the platform.
+
 
 
