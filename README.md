@@ -153,3 +153,36 @@ This pivot table summarizes the average nutritional values and recipe complexity
 The significance of this aggregation lies in its ability to bridge the gap between objective nutritional facts and subjective user satisfaction. It helps identify specific dietary factors—such as sugar content or preparation time—that consistently correlate with positive user experiences, providing a strong empirical basis for our subsequent predictive modeling and hypothesis testing.
 
 ## Assessment of Missingness¶
+### NMAR Analysis
+In our dataset, the review column is likely NMAR (Not Missing At Random). This is because the decision to leave a review often depends on the user's unobserved level of motivation or the intensity of their experience; a user might skip writing a review simply because they felt "neutral" or had an unremarkable experience, a factor that isn't captured by other variables like cooking time or ingredients. To transition this missingness from NMAR to MAR, we would need additional data such as User Engagement Metrics (e.g., time spent on the recipe page) or User Metadata (e.g., total number of recipes viewed versus reviewed), which could provide an observed explanation for why a user chose to remain silent.
+
+### Missingness Dependency
+We investigated the missingness of the review column in our outer merged dataset to determine if it depends on other recipe characteristics. We selected minutes (cooking time) and n_steps (number of steps) as our covariates for the permutation tests.
+
+1. Test 1: Dependency on Minutes
+- Null Hypothesis ($H_0$): The missingness of reviews does not depend on the cooking time (minutes).
+- Alternate Hypothesis ($H_1$): The missingness of reviews does depend on the cooking time (minutes).
+- Test Statistic: The absolute difference of mean minutes between the group with missing reviews and the group with non-missing reviews.
+- Significance Level: 0.05
+- Observed Statistic: 33.56
+
+<img src="" alt="p3 2 1" width="800">
+
+2. Test 2: Dependency on Number of Steps
+- Null Hypothesis ($H_0$): The missingness of reviews does not depend on the number of steps (n_steps).
+- Alternate Hypothesis ($H_1$): The missingness of reviews does depend on the number of steps (n_steps).
+- Test Statistic: The absolute difference of mean n_steps between the group with missing reviews and the group with non-missing reviews.
+- Significance Level: 0.05
+- Observed Statistic: 5.26
+<img src="" alt="p3 2 2" width="800">
+
+Our analysis reveals that the missingness of the review column is not purely random. For minutes, we observed a significant mean difference of 33.56, which resulted in a $p$-value of 0.00. This allows us to reject the null hypothesis, confirming that the missingness of reviews depends on cooking time. Similarly, for n_steps, the observed difference of 5.26 also yielded a significant $p$-value ($p < 0.05$), indicating a dependency on the number of steps. These results suggest that the missingness of reviews is MAR (Missing At Random) with respect to both cooking duration and recipe complexity. A possible explanation is that users are less likely to provide written feedback for recipes that are either exceptionally simple (few steps/minutes) or overly labor-intensive, creating a systematic bias in the qualitative data.
+
+## Hypothesis Testing
+In our dataset, user sentiment is heavily skewed toward positive reviews. To understand what drives negative feedback, we compare the complexity of recipes (measured by n_steps) between Positive (1) and Negative (-1) sentiments.
+- Null Hypothesis ($H_0$): In a balanced sample of reviews, the average number of steps (n_steps) for positive sentiment recipes is the same as that for negative sentiment recipes.
+- Alternative Hypothesis ($H_1$): Negative sentiment reviews have a different average number of steps compared to positive sentiment reviews.
+- Test Statistic: The difference in means of n_steps ($Mean_{Negative} - Mean_{Positive}$).
+- Significance Level ($\alpha$): 0.05
+<img src="" alt="p4" width="800">
+With a $p$-value of 0.0000, we reject the null hypothesis. Even after equalizing the sample sizes to 7,973 entries per group, we found that recipes with negative sentiment reviews have, on average, 0.61 more steps than those with positive sentiment.
