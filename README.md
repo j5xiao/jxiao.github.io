@@ -186,3 +186,47 @@ In our dataset, user sentiment is heavily skewed toward positive reviews. To und
 - Significance Level ($\alpha$): 0.05
 <img src="" alt="p4" width="800">
 With a $p$-value of 0.0000, we reject the null hypothesis. Even after equalizing the sample sizes to 7,973 entries per group, we found that recipes with negative sentiment reviews have, on average, 0.61 more steps than those with positive sentiment.
+
+## Framing a Prediction Problem
+This project aims to build a **multiclass classification model** to predict user taste preferences (categorized as negative -1, neutral 0, positive 1) by analyzing the core nutritional components and cooking complexity of recipes. To comprehensively capture user feedback, we defined two key response variables: first, `review_feel`, derived from the original 1–5 star rating mapping, reflecting the user's most direct quantitative attitude; and second, `rating_process`, obtained by processing review text using the SentimentIntensityAnalyzer sentiment analysis tool, which effectively uncovers subtle emotional polarities hidden when rating data is overly concentrated around 5 stars.
+
+In feature selection, we strictly adhere to the Time of Prediction principle, using only static information available at the moment of recipe publication, such as core nutritional indicators like calories (#), sugar (PDV), and protein (PDV), as well as operational threshold indicators n_steps and minutes. The use of posterior data such as the total number of reviews or historical average ratings is strictly prohibited. Considering the class imbalance in the dataset, where positive feedback far outnumbers negative feedback, pure accuracy could be misleading due to the model's tendency to blindly guess the majority class. Therefore, we chose F1-Score (Macro) as the core evaluation metric. This metric balances precision and recall, ensuring that the model has equal discriminative and predictive power for each sentiment category (especially negative feedback from the minority).
+
+### Baseline Model
+1. Model Description
+
+We chose the Random Forest Classifier as the baseline model. This model captures the non-linear relationship between features and user sentiment by ensembled multiple decision trees. Considering that positive reviews dominate the dataset, we set `class_weight='balanced'` in the model to mitigate the impact of class imbalance on predictions by automatically adjusting class weights.
+
+2. Features & Encoding
+
+The model uses 11 features, all of which are quantitative features derived from the original data:
+
+- User history features: `u_avg_steps`, `u_avg_sugar`, `u_avg_mins`, `u_avg_calo` (continuous values ​​reflecting past user preferences).
+
+- Recipe core metrics and interaction terms: `time_per_step`, `health_index`, `relative_complexity` (continuous values ​​measuring efficiency and relative difficulty).
+
+- Popularity and Bias Indicators: review_count, step_bias, sugar_diff, calories_diff (continuous numerical values ​​measuring recipe popularity and difference from the average).
+
+Coding Notes: Since all selected features are quantitative and do not include categorical or ordinal variables, no additional One-Hot coding or label coding was performed at this stage.
+
+3. Model Performance The model's performance on the test set is as follows:
+
+- Accuracy: 0.76
+
+- Macro Average F1-Score: 0.29
+
+- Performance by Category:
+
+- - Positive (1): Precision 0.76, Recall 1.00, F1 0.86
+
+- - Neutral (0) and Negative (-1): All indicators are almost 0.
+
+4. Is the current model "Good"? Conclusion: The current model is not ideal (Not a "good" model).
+
+While its overall accuracy reached 76%, this was purely due to the model falling into the "majority class trap." Since 76% of the samples in the data were positive (Support: 34,607), the model achieved high accuracy by predicting almost all samples as 1.
+
+- Lack of discrimination: The model completely failed to distinguish between negative (-1) and neutral (0) samples (Recall: 0.00 for each).
+
+- Weak generalization: The Macro Avg F1-Score (0.29) was far lower than the accuracy, indicating that the model completely failed when dealing with the minority class.
+
+- Conclusion: The current feature combinations or model parameters are not yet effective in capturing the key signals that distinguish between "positive" and "negative" reviews. Further feature engineering or more complex oversampling (such as SMOTE) is still needed.
