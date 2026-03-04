@@ -122,6 +122,34 @@ We created a final analytical table that captures the "interaction" between the 
 
 - Time-Series Trends: Analyzed the date of the review relative to the submitted date of the recipe to see if user satisfaction changes as a recipe "ages" or becomes a classic on the platform.
 
+### Univariate Analysis
+- Rating Characteristics: User ratings are extremely concentrated around 5.0, exhibiting a significant negative skewness.
 
-<img src="assets/data/recipe_distributions.png" alt="plot" width="600">
+- Cooking Threshold: Most recipes have 5–15 steps and take less than 60 minutes.
 
+- Nutritional Distribution: Indicators such as sugar, sodium, and fat show a long-tailed distribution, with most recipes maintaining a low percentage-of-daily intake (PDV) level.
+<img src="assets/data/recipe_distributions.png" alt="plot" width="800">
+
+
+### Bivariate Analysis
+First, we considered whether the number of steps was the sole factor influencing the final result. However, the persistent presence of dark blocks at the top, as shown in the graph, indicates that highly complex recipes can maintain high satisfaction levels. The data points did not significantly shift towards the negative rating area at the bottom as the number of steps increased, further demonstrating that there is no significant negative correlation between cooking difficulty and user satisfaction.
+<img src="" alt="p2" width="800">
+
+### Interesting Aggregates
+| Feature Name           | Negative (-1) | Neutral (0) | Positive (1) | Pos/Neg Ratio |
+|:-----------------------|:-------------:|:-----------:|:------------:|:-------------:|
+| **Calories (#)** | 442.29        | 455.08      | 413.41       | **0.93** |
+| **Total Fat (PDV)** | 33.85         | 35.16       | 31.40        | **0.93** |
+| **Sugar (PDV)** | 69.50         | 67.04       | 62.24        | **0.90** |
+| **Sodium (PDV)** | 29.04         | 48.14       | 28.55        | **0.98** |
+| **Protein (PDV)** | 34.03         | 36.06       | 32.89        | **0.97** |
+| **Saturated Fat (PDV)**| 43.09         | 43.50       | 38.69        | **0.90** |
+| **Carbohydrates (PDV)**| 14.10         | 14.09       | 13.04        | **0.92** |
+| **n_steps** | 10.41         | 10.44       | 9.91         | **0.95** |
+| **Minutes** | 167.94        | 94.56       | 101.71       | **0.61** |
+
+This pivot table summarizes the average nutritional values and recipe complexity (steps and time) categorized by user sentiment levels. By introducing the "Pos/Neg Ratio," we can quantitatively observe how recipes that received positive feedback differ from those that received negative feedback; for instance, a ratio greater than 1.0 in sugar or total fat would suggest that users tend to respond more favorably to "richer" or "sweeter" dishes.
+
+The significance of this aggregation lies in its ability to bridge the gap between objective nutritional facts and subjective user satisfaction. It helps identify specific dietary factors—such as sugar content or preparation time—that consistently correlate with positive user experiences, providing a strong empirical basis for our subsequent predictive modeling and hypothesis testing.
+
+## Assessment of Missingness¶
