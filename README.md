@@ -81,8 +81,6 @@ The original nutrition column was stored as a string representation of a list (e
 
 - Action: We parsed and expanded this column into individual numerical features: calories (#), total fat (PDV), sugar (PDV), sodium (PDV), and protein (PDV).
 
-- Normalization: All "Percentage of Daily Value" (PDV) values were converted to floats for statistical consistency.
-
 4. Sentiment Categorization
 To simplify the prediction task, we mapped the original 1–5 numerical rating into three categorical sentiment labels:
 
@@ -103,8 +101,6 @@ To quantify "healthy eating" and "recipe complexity" as mentioned in our overvie
 - Cooking Efficiency: Created a ratio of n_steps to minutes to identify recipes that are "fast but labor-intensive" versus "slow but simple."
 
 - Health Profiles: Categorized recipes into "High/Low Sugar" or "High/Low Fat" groups based on whether their PDV values exceeded the dataset median.
-
-- Ingredient Density: Used n_ingredients as a proxy for the logistical complexity of the recipe.
 
 7. User Feature Engineering (Behavior Characteristics)
 We aggregated the interaction data to understand user-specific tendencies:
@@ -259,3 +255,11 @@ While its overall accuracy reached 76%, this was purely due to the model falling
 
 - Conclusion: The current feature combinations or model parameters are not yet effective in capturing the key signals that distinguish between "positive" and "negative" reviews. Further feature engineering or more complex oversampling (such as SMOTE) is still needed.
 
+## Final Model
+In our feature engineering process, we moved beyond raw recipe data to construct User Profiles and Relative Deviation Features. By calculating metrics such as u_avg_sugar, step_bias, and calories_diff, the model accounts for the "expectation gap" between a user’s habitual diet and a specific recipe's attributes. From a data-generating perspective, these features are superior because user preference is inherently subjective; a high-sugar recipe isn't objectively "bad," but it is likely to receive a negative review from a user accustomed to low-sugar meals. This approach allows the model to simulate the decision-making process where satisfaction is derived from the alignment of a recipe’s complexity and nutrition with a user’s personal baseline.
+
+The chosen modeling algorithm is a Random Forest Classifier integrated within a pipeline featuring RandomUnderSampler and StandardScaler. To address the severe class imbalance—where positive reviews significantly outnumber negatives—we utilized class_weight='balanced_subsample' and strategic undersampling to force the model to learn the characteristics of minority classes. Through GridSearchCV with 3-fold cross-validation, we identified the optimal hyperparameters as n_estimators: 200, max_depth: 15, and min_samples_split: 5. This configuration balances the model's ability to capture deep non-linear interactions between nutritional features while maintaining robust generalization through the forest's ensemble nature.
+
+Compared to a Baseline Model that simply predicts the majority class, our Final Model achieves a Macro F1-Score of 0.34, representing a structured improvement in capturing nuanced feedback. While the high Recall for positive reviews (0.94) shows the model effectively identifies crowd-pleasers, the real value lies in its attempt to distinguish between neutral and negative sentiments under high-imbalance conditions. By employing GroupShuffleSplit, we confirmed that these performance gains are not due to memorizing specific users, but rather from learning generalizable patterns between recipe complexity, nutritional balance, and resulting user satisfaction across the entire dataset.
+
+## Fairness Analysis
