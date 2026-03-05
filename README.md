@@ -155,7 +155,7 @@ Result:
 
 ### Bivariate Analysis
 First, we considered whether the number of steps was the sole factor influencing the final result. However, the persistent presence of dark blocks at the top, as shown in the graph, indicates that highly complex recipes can maintain high satisfaction levels. The data points did not significantly shift towards the negative rating area at the bottom as the number of steps increased, further demonstrating that there is no significant negative correlation between cooking difficulty and user satisfaction.
-<img src="assets/data/q3_p1.png" alt="p2" width="800">
+<img src="assets/data/q3_p2.png" alt="p2" width="800">
 
 ### Interesting Aggregates
 | Feature Name           | Negative (-1) | Neutral (0) | Positive (1) | Pos/Neg Ratio |
@@ -188,7 +188,7 @@ We investigated the missingness of the review column in our outer merged dataset
 - Significance Level: 0.05
 - Observed Statistic: 33.56
 
-<img src="<img src="assets/data/q3_p2.png" alt="p2" width="800">" alt="p3 2 1" width="800">
+<img src="<img src="" alt="p2" width="800">" alt="p3 2 1" width="800">
 
 2. Test 2: Dependency on Number of Steps
 - Null Hypothesis ($H_0$): The missingness of reviews does not depend on the number of steps (n_steps).
@@ -266,4 +266,5 @@ Compared to a Baseline Model that simply predicts the majority class, our Final 
 To verify whether the model exhibits predictive bias across different recipe complexities, we conducted a fairness analysis for simple recipes (less than 8 steps) and complex recipes (more than 8 steps). We selected Macro Precision as the core evaluation metric to measure the accuracy and reliability of the model's predictions of various sentiment tendencies across different groups. By performing 500 permutation tests, we set the null hypothesis ($H_0$) that the model performs fairly, meaning the difference in accuracy between the two groups is solely due to random sampling error.
 
 The experimental results show that the observed difference in the inter-group metric is only -0.0002, corresponding to a p-value of 0.468. Since the p-value is much larger than the commonly used significance level (0.05), we cannot reject the null hypothesis. This strongly demonstrates that our model exhibits extremely high stability and consistency in predictive performance when faced with recipes of varying difficulty. In other words, regardless of whether users are faced with a minimalist quick and easy meal or a complicated and elaborate one, the model's accuracy in capturing users' emotional tendencies remains basically the same, and there is no systematic prediction bias due to the physical complexity of the recipe.
+
 
