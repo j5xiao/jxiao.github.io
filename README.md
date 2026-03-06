@@ -63,7 +63,7 @@ This project, based on the massive dataset from Food.com, aims to explore the un
 To ensure high-quality inputs for our analysis and machine learning models, we performed a series of data cleaning and feature engineering steps on the raw datasets.
 
 1. Merging Datasets
-We performed an Inner Join between df_recipes and df_reviews to link recipe metadata with user feedback.
+We performed an One-Side Join between df_recipes and df_reviews to link recipe metadata with user feedback.
 
 - Key: Linked using id (from recipes) and recipe_id (from reviews).
 
@@ -73,8 +73,6 @@ We performed an Inner Join between df_recipes and df_reviews to link recipe meta
 On Food.com, a rating of 0 often indicates that a user left a review without providing a score.
 
 - Action: We filtered out or imputed these 0-value ratings to prevent them from skewing the average satisfaction metrics.
-
-- Text Cleaning: Rows with empty review strings were removed to maintain the integrity of our sentiment analysis.
 
 3. Nutritional Feature Engineering
 The original nutrition column was stored as a string representation of a list (e.g., [242.5, 12.0, 25.0, ...]).
@@ -90,19 +88,14 @@ To simplify the prediction task, we mapped the original 1–5 numerical rating i
 
 -  Negative (-1): 1–2 stars
 
-5. Outlier Removal and Filtering
-We identified and removed records with unrealistic values that could negatively impact model performance:
-
-- Time & Complexity: Filtered out recipes with minutes that were logically impossible.
-
-6. Recipe Feature Engineering (Content Characteristics)
+5. Recipe Feature Engineering (Content Characteristics)
 To quantify "healthy eating" and "recipe complexity" as mentioned in our overview, we derived the following:
 
 - Cooking Efficiency: Created a ratio of n_steps to minutes to identify recipes that are "fast but labor-intensive" versus "slow but simple."
 
 - Health Profiles: Categorized recipes into "High/Low Sugar" or "High/Low Fat" groups based on whether their PDV values exceeded the dataset median.
 
-7. User Feature Engineering (Behavior Characteristics)
+6. User Feature Engineering (Behavior Characteristics)
 We aggregated the interaction data to understand user-specific tendencies:
 
 - User Engagement Level: Calculated the total number of reviews left by each user_id to distinguish between "power users" and "casual reviewers."
@@ -111,12 +104,10 @@ We aggregated the interaction data to understand user-specific tendencies:
 
 - Taste Profiles: Identified user preferences by tracking the average nutritional values (e.g., average sugar (PDV)) of the recipes they rated highly.
 
-8. Interaction Mapping (The Bridge)
+7. Interaction Mapping (The Bridge)
 We created a final analytical table that captures the "interaction" between the user and the recipe:
 
 - Experience Matching: We looked at whether a user's historical preference (e.g., a history of liking low-calorie recipes) aligns with the current recipe's profile.
-
-- Time-Series Trends: Analyzed the date of the review relative to the submitted date of the recipe to see if user satisfaction changes as a recipe "ages" or becomes a classic on the platform.
 
 Result:
 | Column Name           | Data Type |
@@ -155,7 +146,7 @@ Result:
 
 ### Bivariate Analysis
 First, we considered whether the number of steps was the sole factor influencing the final result. However, the persistent presence of dark blocks at the top, as shown in the graph, indicates that highly complex recipes can maintain high satisfaction levels. The data points did not significantly shift towards the negative rating area at the bottom as the number of steps increased, further demonstrating that there is no significant negative correlation between cooking difficulty and user satisfaction.
-<img src="" alt="p2" width="800">
+<img src="assets/data/q3_p2.png" alt="p2" width="800">
 
 ### Interesting Aggregates
 | Feature Name           | Negative (-1) | Neutral (0) | Positive (1) | Pos/Neg Ratio |
@@ -185,20 +176,23 @@ We investigated the missingness of the review column in our outer merged dataset
 - Null Hypothesis ($H_0$): The missingness of reviews does not depend on the cooking time (minutes).
 - Alternate Hypothesis ($H_1$): The missingness of reviews does depend on the cooking time (minutes).
 - Test Statistic: The absolute difference of mean minutes between the group with missing reviews and the group with non-missing reviews.
-- Significance Level: 0.05
-- Observed Statistic: 33.56
+- Significance Level: 0.03
+- Observed Statistic: 36.38
 
-<img src="" alt="p3 2 1" width="800">
+<img src="<img src="assets/data/q3_p2_1.png" alt="p2" width="800">"
+We tested whether the missingness of review depends on minutes. The permutation test produced a p-value of 0.003, which is also less than 0.05. Therefore, we conclude that the missingness of review depends on minutes.
 
 2. Test 2: Dependency on Number of Steps
 - Null Hypothesis ($H_0$): The missingness of reviews does not depend on the number of steps (n_steps).
 - Alternate Hypothesis ($H_1$): The missingness of reviews does depend on the number of steps (n_steps).
 - Test Statistic: The absolute difference of mean n_steps between the group with missing reviews and the group with non-missing reviews.
-- Significance Level: 0.05
+- Significance Level: 0.08
 - Observed Statistic: 5.26
-<img src="" alt="p3 2 2" width="800">
+<img src="assets/data/q3_p2_2.png" alt="p3 2 2" width="800">
+We performed a permutation test to determine whether the missingness of review depends on n_steps.
+The observed statistic was compared with the simulated distribution, producing a p-value of 0.003.
+Since the p-value is less than 0.08, we reject the null hypothesis and conclude that the missingness of review depends on n_steps.
 
-Our analysis reveals that the missingness of the review column is not purely random. For minutes, we observed a significant mean difference of 33.56, which resulted in a $p$-value of 0.00. This allows us to reject the null hypothesis, confirming that the missingness of reviews depends on cooking time. Similarly, for n_steps, the observed difference of 5.26 also yielded a significant $p$-value ($p < 0.05$), indicating a dependency on the number of steps. These results suggest that the missingness of reviews is MAR (Missing At Random) with respect to both cooking duration and recipe complexity. A possible explanation is that users are less likely to provide written feedback for recipes that are either exceptionally simple (few steps/minutes) or overly labor-intensive, creating a systematic bias in the qualitative data.
 
 ## Hypothesis Testing
 In our dataset, user sentiment is heavily skewed toward positive reviews. To understand what drives negative feedback, we compare the complexity of recipes (measured by n_steps) between Positive (1) and Negative (-1) sentiments.
@@ -206,7 +200,7 @@ In our dataset, user sentiment is heavily skewed toward positive reviews. To und
 - Alternative Hypothesis ($H_1$): Negative sentiment reviews have a different average number of steps compared to positive sentiment reviews.
 - Test Statistic: The difference in means of n_steps ($Mean_{Negative} - Mean_{Positive}$).
 - Significance Level ($\alpha$): 0.05
-<img src="" alt="p4" width="800">
+<img src="assets/data/q4_1.png" alt="p4" width="800">
 With a $p$-value of 0.0000, we reject the null hypothesis. Even after equalizing the sample sizes to 7,973 entries per group, we found that recipes with negative sentiment reviews have, on average, 0.61 more steps than those with positive sentiment.
 
 ## Framing a Prediction Problem
@@ -265,4 +259,16 @@ Compared to a Baseline Model that simply predicts the majority class, our Final 
 ## Fairness Analysis
 To verify whether the model exhibits predictive bias across different recipe complexities, we conducted a fairness analysis for simple recipes (less than 8 steps) and complex recipes (more than 8 steps). We selected Macro Precision as the core evaluation metric to measure the accuracy and reliability of the model's predictions of various sentiment tendencies across different groups. By performing 500 permutation tests, we set the null hypothesis ($H_0$) that the model performs fairly, meaning the difference in accuracy between the two groups is solely due to random sampling error.
 
+- Null Hypothesis ($H_0$): The model is fair. Its Macro Precision for simple and complex recipes is roughly the same, and any observed differences are due to random chance.
+- Alternative Hypothesis ($H_1$): The model is unfair. Its precision for one group is significantly different from the other.
+Permutation Test Results 
+- Observed Difference: -0.000228
+- P-value: 0.468
+<img src="assets/data/q8.png" alt="p4" width="800">
+
 The experimental results show that the observed difference in the inter-group metric is only -0.0002, corresponding to a p-value of 0.468. Since the p-value is much larger than the commonly used significance level (0.05), we cannot reject the null hypothesis. This strongly demonstrates that our model exhibits extremely high stability and consistency in predictive performance when faced with recipes of varying difficulty. In other words, regardless of whether users are faced with a minimalist quick and easy meal or a complicated and elaborate one, the model's accuracy in capturing users' emotional tendencies remains basically the same, and there is no systematic prediction bias due to the physical complexity of the recipe.
+
+
+
+
+
