@@ -179,8 +179,9 @@ We investigated the missingness of the review column in our outer merged dataset
 - Significance Level: 0.03
 - Observed Statistic: 36.38
 
-<img src="<img src="assets/data/q3_p2_1.png" alt="p2" width="800">"
+<img src="<img src="assets/data/q3_p2_1.png" alt="p2" width="800">
 We tested whether the missingness of review depends on minutes. The permutation test produced a p-value of 0.003, which is also less than 0.05. Therefore, we conclude that the missingness of review depends on minutes.
+
 
 2. Test 2: Dependency on Number of Steps
 - Null Hypothesis ($H_0$): The missingness of reviews does not depend on the number of steps (n_steps).
@@ -267,8 +268,5 @@ Permutation Test Results
 <img src="assets/data/q8.png" alt="p4" width="800">
 
 The experimental results show that the observed difference in the inter-group metric is only -0.0002, corresponding to a p-value of 0.468. Since the p-value is much larger than the commonly used significance level (0.05), we cannot reject the null hypothesis. This strongly demonstrates that our model exhibits extremely high stability and consistency in predictive performance when faced with recipes of varying difficulty. In other words, regardless of whether users are faced with a minimalist quick and easy meal or a complicated and elaborate one, the model's accuracy in capturing users' emotional tendencies remains basically the same, and there is no systematic prediction bias due to the physical complexity of the recipe.
-
-
-
 
 
