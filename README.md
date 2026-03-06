@@ -179,7 +179,7 @@ We investigated the missingness of the review column in our outer merged dataset
 - Significance Level: 0.03
 - Observed Statistic: 36.38
 
-<img src="<img src="assets/data/q3_p2_1.png" alt="p2" width="800">
+<img src="assets/data/q3_p2_1.png" alt="p2" width="800">
 We tested whether the missingness of review depends on minutes. The permutation test produced a p-value of 0.003, which is also less than 0.05. Therefore, we conclude that the missingness of review depends on minutes.
 
 
@@ -191,8 +191,8 @@ We tested whether the missingness of review depends on minutes. The permutation 
 - Observed Statistic: 5.26
 <img src="assets/data/q3_p2_2.png" alt="p3 2 2" width="800">
 We performed a permutation test to determine whether the missingness of review depends on n_steps.
-The observed statistic was compared with the simulated distribution, producing a p-value of 0.003.
-Since the p-value is less than 0.08, we reject the null hypothesis and conclude that the missingness of review depends on n_steps.
+The observed statistic was compared with the simulated distribution, producing a p-value of 0.008.
+Since the p-value is less than 0.05, we reject the null hypothesis and conclude that the missingness of review depends on n_steps.
 
 
 ## Hypothesis Testing
@@ -268,5 +268,6 @@ Permutation Test Results
 <img src="assets/data/q8.png" alt="p4" width="800">
 
 The experimental results show that the observed difference in the inter-group metric is only -0.0002, corresponding to a p-value of 0.468. Since the p-value is much larger than the commonly used significance level (0.05), we cannot reject the null hypothesis. This strongly demonstrates that our model exhibits extremely high stability and consistency in predictive performance when faced with recipes of varying difficulty. In other words, regardless of whether users are faced with a minimalist quick and easy meal or a complicated and elaborate one, the model's accuracy in capturing users' emotional tendencies remains basically the same, and there is no systematic prediction bias due to the physical complexity of the recipe.
+
 
 
