@@ -115,8 +115,8 @@ We created a final analytical table that captures the "interaction" between the 
 - Experience Matching: We looked at whether a user's historical preference (e.g., a history of liking low-calorie recipes) aligns with the current recipe's profile.
 
 Result:
-| Column Name           | Data Type |
-|-----------------------|-----------|
+| Column Name | Data Type |
+| :--- | :--- |
 | user_id               | float64   |
 | id                    | int64     |
 | calories (#)          | float64   |
