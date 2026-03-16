@@ -156,7 +156,7 @@ First, we considered whether the number of steps was the sole factor influencing
 
 ### Interesting Aggregates
 | Feature Name           | Negative (-1) | Neutral (0) | Positive (1) | Pos/Neg Ratio |
-|:-----------------------|:-------------:|:-----------:|:------------:|:-------------:|
+|:---|:---|:---|:---|:---|
 | **Calories (#)** | 442.29        | 455.08      | 413.41       | **0.93** |
 | **Total Fat (PDV)** | 33.85         | 35.16       | 31.40        | **0.93** |
 | **Sugar (PDV)** | 69.50         | 67.04       | 62.24        | **0.90** |
