@@ -155,6 +155,7 @@ First, we considered whether the number of steps was the sole factor influencing
 <img src="assets/data/q3_p2.png" alt="p2" width="800">
 
 ### Interesting Aggregates
+
 | Feature Name           | Negative (-1) | Neutral (0) | Positive (1) | Pos/Neg Ratio |
 | :--- | :--- | :--- | :--- | :--- |
 | Calories (#) | 442.29        | 455.08      | 413.41       | 0.93 |
