@@ -140,6 +140,15 @@ Result:
 | relative_complexity   | float64   |
 | review_count          | int64     |
 
+Final Dataset:
+
+| user_id | id | calories (#) | sugar (PDV) | protein (PDV) | n_steps | minutes | final_target | user_idx | recipe_idx | u_avg_steps | u_avg_sugar | u_avg_calo | step_bias | calories_diff | sugar_diff |
+|--------|------|-------------|-------------|---------------|---------|---------|-------------|---------|-----------|-------------|-------------|------------|-----------|--------------|-----------|
+| 424680.0 | 453467 | 595.1 | 211.0 | 13.0 | 12 | 45 | 1 | 7045 | 65442 | 9.47 | 94.55 | 403.11 | 1.31 | 191.99 | 116.45 |
+| 29782.0 | 306168 | 194.8 | 6.0 | 22.0 | 6 | 40 | 1 | 278 | 13841 | 9.14 | 36.99 | 366.85 | 0.35 | -172.05 | -30.99 |
+| 768828.0 | 306168 | 194.8 | 6.0 | 22.0 | 6 | 40 | 1 | 12373 | 13841 | 8.82 | 39.55 | 334.57 | 0.37 | -139.77 | -33.55 |
+| 520830.0 | 306168 | 194.8 | 6.0 | 22.0 | 6 | 40 | 1 | 8575 | 13841 | 9.00 | 114.29 | 423.94 | 0.36 | -229.14 | -108.29 |
+| 369715.0 | 500166 | 249.4 | 4.0 | 39.0 | 5 | 20 | 0 | 6249 | 77140 | 8.04 | 35.02 | 368.77 | 0.31 | -119.37 | -31.02 |
 
 ### Univariate Analysis
 - Rating Characteristics: User ratings are extremely concentrated around 5.0, exhibiting a significant negative skewness.
@@ -197,7 +206,7 @@ MCAR (Missing Completely at Random): To find a feature that the missingness is i
 
 - Significance Level ($\alpha$): 0.05
 
-<img src="<img src="assets/data/MAR.png" alt="p2" width="800">
+<img src="assets/data/MAR.png" alt="p2" width="800">
 Conclusion:
 
 - The experimentally obtained p-value is approximately 0.034. Since p < 0.05, we reject the null hypothesis ($H_0$). This indicates that the missing reviews exhibit Missing at Random (MAR) characteristics, with the missing rate significantly dependent on the user ratings given. Users who typically give average scores (e.g., 3-4 stars) are more likely to ignore written reviews, while users with extreme ratings are more likely to leave comments.
@@ -220,37 +229,119 @@ Conclusion:
 
 
 ## Hypothesis Testing
-In our dataset, user sentiment is heavily skewed toward positive reviews. To understand what drives negative feedback, we compare the complexity of recipes (measured by n_steps) between Positive (1) and Negative (-1) sentiments.
-- Null Hypothesis ($H_0$): In a balanced sample of reviews, the average number of steps (n_steps) for positive sentiment recipes is the same as that for negative sentiment recipes.
-- Alternative Hypothesis ($H_1$): Negative sentiment reviews have a different average number of steps compared to positive sentiment reviews.
-- Test Statistic: The difference in means of n_steps ($Mean_{Negative} - Mean_{Positive}$).
-- Significance Level ($\alpha$): 0.05
+In our dataset, user sentiment is heavily skewed toward positive reviews. To better understand what may drive negative feedback, we investigate whether recipe complexity—measured by the number of steps (`n_steps`)—differs between recipes with positive (1) and negative (-1) sentiment.
+
+**Null Hypothesis ($H_0$):**  
+The mean number of steps for recipes with positive sentiment reviews is equal to that for recipes with negative sentiment reviews.
+
+**Alternative Hypothesis ($H_1$):**  
+The mean number of steps for recipes with positive sentiment reviews is different from that for recipes with negative sentiment reviews.
+
+**Test Statistic:**  
+Difference in means of `n_steps`:
+
+\[
+Mean_{Negative} - Mean_{Positive}
+\]
+
+**Significance Level ($\alpha$):**  0.05
 <img src="assets/data/q4_1.png" alt="p4" width="800">
-With a $p$-value of 0.0000, we reject the null hypothesis. Even after equalizing the sample sizes to 7,973 entries per group, we found that recipes with negative sentiment reviews have, on average, 0.61 more steps than those with positive sentiment.
+To account for the imbalance in sentiment classes, we created a balanced sample with 7,973 observations for each group.
+
+The resulting **p-value was < 0.001**, leading us to reject the null hypothesis at the 0.05 significance level.
+
+This result suggests that recipes associated with negative sentiment reviews tend to have slightly more steps on average. In our sample, recipes with negative sentiment had approximately **0.61 more steps** than those with positive sentiment.
+
+Because this is a statistical test rather than a randomized experiment, this result does not prove a causal relationship. However, it provides evidence that recipe complexity may be associated with more negative user sentiment.
 
 ## Framing a Prediction Problem
-This project aims to build a **multiclass classification model** to predict user taste preferences (categorized as negative -1, neutral 0, positive 1) by analyzing the core nutritional components and cooking complexity of recipes. To comprehensively capture user feedback, we defined two key response variables: first, `review_feel`, derived from the original 1–5 star rating mapping, reflecting the user's most direct quantitative attitude; and second, `rating_process`, obtained by processing review text using the SentimentIntensityAnalyzer sentiment analysis tool, which effectively uncovers subtle emotional polarities hidden when rating data is overly concentrated around 5 stars.
+In this project, we aim to build a predictive model that estimates user sentiment toward a recipe based on its nutritional content and cooking complexity. The goal is to determine whether certain characteristics of a recipe are associated with more positive or negative user feedback.
 
-In feature selection, we strictly adhere to the Time of Prediction principle, using only static information available at the moment of recipe publication, such as core nutritional indicators like calories (#), sugar (PDV), and protein (PDV), as well as operational threshold indicators n_steps and minutes. The use of posterior data such as the total number of reviews or historical average ratings is strictly prohibited. Considering the class imbalance in the dataset, where positive feedback far outnumbers negative feedback, pure accuracy could be misleading due to the model's tendency to blindly guess the majority class. Therefore, we chose F1-Score (Macro) as the core evaluation metric. This metric balances precision and recall, ensuring that the model has equal discriminative and predictive power for each sentiment category (especially negative feedback from the minority).
+### Prediction Type
 
-### Baseline Model
+This task is a multiclass classification problem. The model predicts one of three possible sentiment categories:
+
+- -1: Negative sentiment
+
+ - 0: Neutral sentiment
+
+ - 1: Positive sentiment
+
+These categories represent the overall satisfaction level of users toward a recipe.
+
+### Response Variable
+
+The response variable we aim to predict is final_target, a sentiment label that integrates two sources of information from the dataset:
+
+ - review_feel, which is derived from the original 1–5 star ratings and reflects the numerical evaluation provided by users.
+
+ - rating_process, which is obtained from sentiment analysis of the review text using a sentiment analysis tool.
+
+To combine these two signals, we first compute a combined sentiment score:
+
+satisfaction_score = review_feel + rating_process
+
+This score ranges from −2 to 2, capturing both the numerical rating and the emotional tone of the review text.
+We then transform this score into a simplified three-class variable called final_target:
+
+ - Positive (1): satisfaction_score > 1
+
+ - Neutral (0): satisfaction_score = 1
+
+ - Negative (-1): satisfaction_score ≤ 0
+
+This combined variable provides a more comprehensive representation of user satisfaction than relying on either ratings or text sentiment alone.
+
+### Features and Time of Prediction
+
+To ensure a realistic prediction scenario, we only use features that would be available at the time a recipe is published, before users interact with it. These include:
+
+Nutritional information, such as calories (#), sugar (PDV), protein (PDV), sodium (PDV), and fat (PDV).
+
+Recipe complexity indicators, such as n_steps and minutes.
+
+These variables describe inherent characteristics of the recipe itself. We intentionally exclude variables that would only be known after users have reviewed the recipe, such as the total number of reviews, historical average ratings, or other aggregated user feedback. Including those variables would violate the time-of-prediction assumption and lead to unrealistic model performance.
+
+### Evaluation Metric
+
+The dataset is highly imbalanced, with the majority of observations belonging to the positive sentiment category. In such cases, accuracy alone can be misleading, since a model that simply predicts the majority class could achieve high accuracy without actually identifying minority classes correctly.
+
+To address this issue, we use the Macro F1-score as the primary evaluation metric. The Macro F1-score computes the F1-score for each class independently and then averages them, giving equal weight to negative, neutral, and positive sentiment classes. This ensures that the model is evaluated based on its ability to correctly identify all sentiment categories rather than focusing primarily on the dominant class.
+
+By using Macro F1-score, we obtain a more balanced and informative evaluation of the classifier’s performance across all sentiment groups.
+
+## Baseline Model
 1. Model Description
 
-We chose the Random Forest Classifier as the baseline model. This model captures the non-linear relationship between features and user sentiment by ensembled multiple decision trees. Considering that positive reviews dominate the dataset, we set `class_weight='balanced'` in the model to mitigate the impact of class imbalance on predictions by automatically adjusting class weights.
+For the baseline model, a Random Forest Classifier was used to predict whether a user would like, dislike, or feel neutral about a recipe. Random Forest was selected because it performs well on tabular datasets and can capture non-linear relationships between user preferences and recipe characteristics. Additionally, Random Forest is robust to outliers and does not require strict feature scaling, which makes it suitable for features such as cooking steps, calories, and sugar content that may have large numeric ranges.
+
+To address the class imbalance in the dataset, the parameter ** class_weight='balanced' ** was applied so that minority classes receive higher importance during training.
+
+The model was trained on an 80/20 split using GroupShuffleSplit, where the grouping variable was ** user_id **. This ensures that the same user does not appear in both training and testing sets, preventing data leakage.
 
 2. Features & Encoding
 
-The model uses 11 features, all of which are quantitative features derived from the original data:
+The model uses 9 numerical features derived from both recipe attributes and user preference profiles.
 
-- User history features: `u_avg_steps`, `u_avg_sugar`, `u_avg_mins`, `u_avg_calo` (continuous values ​​reflecting past user preferences).
+These describe the intrinsic properties of the recipe, calculated from each user's historical behavior in the training data, capture the relationship between a recipe and a user's typical preferences.
 
-- Recipe core metrics and interaction terms: `time_per_step`, `health_index`, `relative_complexity` (continuous values ​​measuring efficiency and relative difficulty).
+｜ Feature | Description |
+| :--- | :--- |
+｜ calories (#) | numerical |
+｜ sugar (PDV) | numerical |
+｜ n_steps | numerical |
+｜ u_avg_sugar | numerical |
+｜ u_avg_steps | numerical |
+｜ u_avg_calo | numerical |
+｜ step_bias | numerical |
+｜ calories_diff | numerical |
+｜ sugar_diff | numerical |
 
-- Popularity and Bias Indicators: review_count, step_bias, sugar_diff, calories_diff (continuous numerical values ​​measuring recipe popularity and difference from the average).
+3. Time-of-Prediction Consideration
 
-Coding Notes: Since all selected features are quantitative and do not include categorical or ordinal variables, no additional One-Hot coding or label coding was performed at this stage.
-
-3. Model Performance The model's performance on the test set is as follows:
+Some features (u_avg_*, review_count) are derived from user history or recipe popularity. Strictly speaking, these would not be available at the time a user first sees the recipe, so their inclusion violates the time-of-prediction principle.
+In a more rigorous model, we would only use static recipe features such as calories (#), sugar (PDV), protein (PDV), n_steps, minutes, time_per_step, and health_index.
+4. Model Performance The model's performance on the test set is as follows:
 
 - Accuracy: 0.76
 
@@ -262,7 +353,7 @@ Coding Notes: Since all selected features are quantitative and do not include ca
 
 - - Neutral (0) and Negative (-1): All indicators are almost 0.
 
-4. Is the current model "Good"?
+5. Is the current model "Good"?
 
 Conclusion: The current model is not ideal (Not a "good" model).
 
@@ -272,14 +363,28 @@ While its overall accuracy reached 76%, this was purely due to the model falling
 
 - Weak generalization: The Macro Avg F1-Score (0.29) was far lower than the accuracy, indicating that the model completely failed when dealing with the minority class.
 
-- Conclusion: The current feature combinations or model parameters are not yet effective in capturing the key signals that distinguish between "positive" and "negative" reviews. Further feature engineering or more complex oversampling (such as SMOTE) is still needed.
+- Conclusion: The current feature combinations or model parameters are not yet effective in capturing the key signals that distinguish between "positive" and "negative" reviews. Further feature engineering or more complex oversampling is still needed.
 
 ## Final Model
-In our feature engineering process, we moved beyond raw recipe data to construct User Profiles and Relative Deviation Features. By calculating metrics such as u_avg_sugar, step_bias, and calories_diff, the model accounts for the "expectation gap" between a user’s habitual diet and a specific recipe's attributes. From a data-generating perspective, these features are superior because user preference is inherently subjective; a high-sugar recipe isn't objectively "bad," but it is likely to receive a negative review from a user accustomed to low-sugar meals. This approach allows the model to simulate the decision-making process where satisfaction is derived from the alignment of a recipe’s complexity and nutrition with a user’s personal baseline.
+In our feature engineering process, we moved beyond raw recipe attributes to construct user preference profiles and relative deviation features. Specifically, we introduced user-level statistics such as u_avg_steps, u_avg_sugar, and u_avg_calo, which represent the typical cooking complexity and nutritional patterns of recipes previously reviewed by each user. These variables serve as a baseline representation of a user’s habitual cooking preferences.
 
-The chosen modeling algorithm is a Random Forest Classifier integrated within a pipeline featuring RandomUnderSampler and StandardScaler. To address the severe class imbalance—where positive reviews significantly outnumber negatives—we utilized class_weight='balanced_subsample' and strategic undersampling to force the model to learn the characteristics of minority classes. Through GridSearchCV with 3-fold cross-validation, we identified the optimal hyperparameters as n_estimators: 200, max_depth: 15, and min_samples_split: 5. This configuration balances the model's ability to capture deep non-linear interactions between nutritional features while maintaining robust generalization through the forest's ensemble nature.
+Building on these profiles, we created interaction features including step_bias, calories_diff, and sugar_diff, which measure the deviation between a recipe’s attributes and the user’s historical baseline. From a data-generating perspective, these features are meaningful because user satisfaction is inherently relative rather than absolute. For example, a high-sugar recipe is not objectively “bad,” but it may receive negative feedback from users who typically prefer lower-sugar meals. By modeling the gap between recipe characteristics and user expectations, these features allow the model to better approximate the real decision-making process underlying user reviews.
 
-Compared to a Baseline Model that simply predicts the majority class, our Final Model achieves a Macro F1-Score of 0.34, representing a structured improvement in capturing nuanced feedback. While the high Recall for positive reviews (0.94) shows the model effectively identifies crowd-pleasers, the real value lies in its attempt to distinguish between neutral and negative sentiments under high-imbalance conditions. By employing GroupShuffleSplit, we confirmed that these performance gains are not due to memorizing specific users, but rather from learning generalizable patterns between recipe complexity, nutritional balance, and resulting user satisfaction across the entire dataset.
+The chosen modeling algorithm is a Random Forest Classifier, implemented within a pipeline that incorporates RandomUnderSampler to address the severe class imbalance present in the dataset. Because positive reviews significantly outnumber neutral and negative ones, undersampling was used to reduce the dominance of the majority class during training. In addition, the model utilized the parameter ** class_weight='balanced_subsample' **, which further adjusts the importance of minority classes during tree construction.
+
+To determine the optimal model configuration, we applied GridSearchCV with 3-fold cross-validation, tuning key hyperparameters including the number of trees and tree depth. The best-performing configuration was:
+
+ - n_estimators = 200
+
+ - max_depth = 15
+
+ - min_samples_split = 5
+
+This configuration provides a balance between capturing complex non-linear relationships among features while maintaining stable generalization through the ensemble structure of the Random Forest.
+
+Compared with our Baseline Random Forest model, the Final Model shows improved robustness when dealing with highly imbalanced review distributions. The model achieves a Macro F1-score of 0.33, indicating improved recognition of minority classes relative to the baseline. Although the model still performs best on the majority positive class, the inclusion of user-relative features enables it to better distinguish neutral and negative feedback.
+
+Finally, to ensure the model generalizes to unseen users, we used GroupShuffleSplit with user_id as the grouping variable, ensuring that the same user does not appear in both the training and testing datasets. This prevents the model from memorizing individual user behavior and instead encourages learning broader patterns relating recipe complexity, nutritional characteristics, and resulting user satisfaction.
 
 ## Fairness Analysis
 To verify whether the model exhibits predictive bias across different recipe complexities, we conducted a fairness analysis for simple recipes (less than 8 steps) and complex recipes (more than 8 steps). We selected Macro Precision as the core evaluation metric to measure the accuracy and reliability of the model's predictions of various sentiment tendencies across different groups. By performing 500 permutation tests, we set the null hypothesis ($H_0$) that the model performs fairly, meaning the difference in accuracy between the two groups is solely due to random sampling error.
@@ -291,6 +396,6 @@ Permutation Test Results
 - P-value: 0.468
 <img src="assets/data/q8.png" alt="p4" width="800">
 
-The experimental results show that the observed difference in the inter-group metric is only -0.0002, corresponding to a p-value of 0.468. Since the p-value is much larger than the commonly used significance level (0.05), we cannot reject the null hypothesis. This strongly demonstrates that our model exhibits extremely high stability and consistency in predictive performance when faced with recipes of varying difficulty. In other words, regardless of whether users are faced with a minimalist quick and easy meal or a complicated and elaborate one, the model's accuracy in capturing users' emotional tendencies remains basically the same, and there is no systematic prediction bias due to the physical complexity of the recipe.
+The experimental results show that the observed difference in the inter-group metric is only -0.114, corresponding to a p-value of 1.0. Since the p-value is much larger than the commonly used significance level (0.05), we cannot reject the null hypothesis. This strongly demonstrates that our model exhibits extremely high stability and consistency in predictive performance when faced with recipes of varying difficulty. In other words, regardless of whether users are faced with a minimalist quick and easy meal or a complicated and elaborate one, the model's accuracy in capturing users' emotional tendencies remains basically the same, and there is no systematic prediction bias due to the physical complexity of the recipe.
 
 
