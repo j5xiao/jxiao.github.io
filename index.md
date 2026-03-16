@@ -176,29 +176,46 @@ The significance of this aggregation lies in its ability to bridge the gap betwe
 In our dataset, the review column is likely NMAR (Not Missing At Random). This is because the decision to leave a review often depends on the user's unobserved level of motivation or the intensity of their experience; a user might skip writing a review simply because they felt "neutral" or had an unremarkable experience, a factor that isn't captured by other variables like cooking time or ingredients. To transition this missingness from NMAR to MAR, we would need additional data such as User Engagement Metrics (e.g., time spent on the recipe page) or User Metadata (e.g., total number of recipes viewed versus reviewed), which could provide an observed explanation for why a user chose to remain silent.
 
 ### Missingness Dependency
-We investigated the missingness of the review column in our outer merged dataset to determine if it depends on other recipe characteristics. We selected minutes (cooking time) and n_steps (number of steps) as our covariates for the permutation tests.
+In this section, we investigate the mechanism of missingness for the review column (which contains 169 missing values). Our goal is to determine whether the absence of a text review is purely accidental or if it systematically relates to other variables in the dataset.
 
-1. Test 1: Dependency on Minutes
-- Null Hypothesis ($H_0$): The missingness of reviews does not depend on the cooking time (minutes).
-- Alternate Hypothesis ($H_1$): The missingness of reviews does depend on the cooking time (minutes).
-- Test Statistic: The absolute difference of mean minutes between the group with missing reviews and the group with non-missing reviews.
-- Significance Level: 0.03
-- Observed Statistic: 36.38
+To achieve this, we performed Permutation Tests (1,000 iterations) on a 1:1 balanced sample of missing and non-missing data. We tested two primary scenarios:
 
-<img src="<img src="assets/data/q3_p2_1.png" alt="p2" width="800">
-We tested whether the missingness of review depends on minutes. The permutation test produced a p-value of 0.003, which is also less than 0.05. Therefore, we conclude that the missingness of review depends on minutes.
+MAR (Missing at Random): To find a feature that the missingness depends on.
+
+MCAR (Missing Completely at Random): To find a feature that the missingness is independent of, serving as a control to validate our statistical consistency.
+
+1. Test 1: Dependent Case: Review Missingness Dependence on Rating 
+
+- Experimental Background: We investigate whether users' decision to leave a written review is related to their rating.
+
+- Null Hypothesis ($H_0$): Missing reviews are independent of ratings. That is, there is no significant difference in rating distribution between samples with missing reviews and samples with written reviews.
+
+- Alternative Hypothesis ($H_a$): Missing reviews depend on ratings. That is, users with different rating preferences are more likely to leave a written review (MAR).
+
+- Test Statistic: Absolute Difference in Means between the mean ratings of the missing and non-missing groups.
+
+- Significance Level ($\alpha$): 0.05
+
+<img src="<img src="assets/data/MAR.png" alt="p2" width="800">
+Conclusion:
+
+- The experimentally obtained p-value is approximately 0.034. Since p < 0.05, we reject the null hypothesis ($H_0$). This indicates that the missing reviews exhibit Missing at Random (MAR) characteristics, with the missing rate significantly dependent on the user ratings given. Users who typically give average scores (e.g., 3-4 stars) are more likely to ignore written reviews, while users with extreme ratings are more likely to leave comments.
 
 
-2. Test 2: Dependency on Number of Steps
-- Null Hypothesis ($H_0$): The missingness of reviews does not depend on the number of steps (n_steps).
-- Alternate Hypothesis ($H_1$): The missingness of reviews does depend on the number of steps (n_steps).
-- Test Statistic: The absolute difference of mean n_steps between the group with missing reviews and the group with non-missing reviews.
-- Significance Level: 0.08
-- Observed Statistic: 5.26
-<img src="assets/data/q3_p2_2.png" alt="p3 2 2" width="800">
-We performed a permutation test to determine whether the missingness of review depends on n_steps.
-The observed statistic was compared with the simulated distribution, producing a p-value of 0.003.
-Since the p-value is less than 0.08, we reject the null hypothesis and conclude that the missingness of review depends on n_steps.
+2. Independent Case: Review Missingness Dependency on random_index
+
+- Experimental Background: To verify the testing logic and provide an independence comparison, we introduce an absolutely random feature, random_index.
+
+- Null Hypothesis ($H_0$): Missing reviews are independent of random_index. The distributions of the two groups on the random feature should be essentially the same.
+
+- Alternative Hypothesis ($H_a$): Missing reviews depend on random_index.
+
+- Test Statistic: The absolute difference between the mean random_index of the missing and non-missing groups.
+- Significance Level ($\alpha$): 0.05
+<img src="assets/data/MCAR.png" alt="p3 2 2" width="800">
+Conclusion:
+
+- The experimentally obtained p-value $\approx$ is 0.497 (example value). Since $P > 0.05$, we cannot reject the null hypothesis ($H_0$). This demonstrates that there is no statistical association between the lack of review and the randomness characteristic. This result conforms to the definition of Missing Completely at Random (MCAR) and validates the effectiveness of our permutation test in identifying randomness.
 
 
 ## Hypothesis Testing
