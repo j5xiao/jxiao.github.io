@@ -157,15 +157,15 @@ First, we considered whether the number of steps was the sole factor influencing
 ### Interesting Aggregates
 | Feature Name           | Negative (-1) | Neutral (0) | Positive (1) | Pos/Neg Ratio |
 | :--- | :--- | :--- | :--- | :--- |
-| **Calories (#)** | 442.29        | 455.08      | 413.41       | **0.93** |
-| **Total Fat (PDV)** | 33.85         | 35.16       | 31.40        | **0.93** |
-| **Sugar (PDV)** | 69.50         | 67.04       | 62.24        | **0.90** |
-| **Sodium (PDV)** | 29.04         | 48.14       | 28.55        | **0.98** |
-| **Protein (PDV)** | 34.03         | 36.06       | 32.89        | **0.97** |
-| **Saturated Fat (PDV)**| 43.09         | 43.50       | 38.69        | **0.90** |
-| **Carbohydrates (PDV)**| 14.10         | 14.09       | 13.04        | **0.92** |
-| **n_steps** | 10.41         | 10.44       | 9.91         | **0.95** |
-| **Minutes** | 167.94        | 94.56       | 101.71       | **0.61** |
+| Calories (#) | 442.29        | 455.08      | 413.41       | 0.93 |
+| Total Fat (PDV) | 33.85         | 35.16       | 31.40        | 0.93 |
+| Sugar (PDV) | 69.50         | 67.04       | 62.24        | 0.90 |
+| Sodium (PDV) | 29.04         | 48.14       | 28.55        | 0.98 |
+| Protein (PDV) | 34.03         | 36.06       | 32.89        | 0.97 |
+| Saturated Fat (PDV)| 43.09         | 43.50       | 38.69        | 0.90 |
+| Carbohydrates (PDV)| 14.10         | 14.09       | 13.04        | 0.92 |
+| n_steps | 10.41         | 10.44       | 9.91         | 0.95 |
+| Minutes | 167.94        | 94.56       | 101.71       | 0.61 |
 
 This pivot table summarizes the average nutritional values and recipe complexity (steps and time) categorized by user sentiment levels. By introducing the "Pos/Neg Ratio," we can quantitatively observe how recipes that received positive feedback differ from those that received negative feedback; for instance, a ratio greater than 1.0 in sugar or total fat would suggest that users tend to respond more favorably to "richer" or "sweeter" dishes.
 
